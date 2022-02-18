@@ -552,7 +552,7 @@ const OrderDetails = () => {
           </Box>
 
           <Divider />
-          <Box overflowX="auto" width={'80%'}>
+          <Box overflowX="auto" padding={'10px'}>
             <Table columns={columns} dataSource={joms} pagination={false}/>
             {/* <Table variant="simple" style={{ marginTop: "20px" }} {...getTableProps()}>
               <Thead>
