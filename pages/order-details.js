@@ -1,6 +1,6 @@
 import {
   Box,
-  Table,
+  // Table,
   Thead,
   Tbody,
   Tr,
@@ -27,6 +27,7 @@ import {
   IconButton,
   Spacer,
 } from "@chakra-ui/react";
+import { Table } from 'antd';
 import { CloseIcon, LinkIcon } from "@chakra-ui/icons";
 import { AiOutlineTag, AiOutlineFilter, } from "react-icons/ai";
 import {
@@ -187,104 +188,66 @@ const OrderDetails = () => {
     };
   }, [r.events]);
 
-  function DefaultColumnFilter({
-    column: { filterValue, setFilter, preFilteredRows, id },
-  }) {
-    // Calculate the options for filtering
-    // using the preFilteredRows
-    const options = React.useMemo(() => {
-      const options = new Set()
-      preFilteredRows.forEach(row => {
-        if (id == 'payment_method')
-          options.add(row.original.payment_method)
-        else if (id == 'pay') {
-          options.add('Paid')
-          options.add('Unpaid')
-        }
-      })
-      return [...options.values()]
-    }, [id, preFilteredRows])
+  // function DefaultColumnFilter({
+  //   column: { filterValue, setFilter, preFilteredRows, id },
+  // }) {
+  //   // Calculate the options for filtering
+  //   // using the preFilteredRows
+  //   const options = React.useMemo(() => {
+  //     const options = new Set()
+  //     preFilteredRows.forEach(row => {
+  //       if (id == 'payment_method')
+  //         options.add(row.original.payment_method)
+  //       else if (id == 'pay') {
+  //         options.add('Paid')
+  //         options.add('Unpaid')
+  //       }
+  //     })
+  //     return [...options.values()]
+  //   }, [id, preFilteredRows])
 
-    // Render a multi-select box
-    return (
-      <Menu>
-        <MenuButton
-          transition='all 0.2s'
-          borderRadius='md'
-          borderWidth='1px'
-          _hover={{ bg: 'gray.400' }}
-          _expanded={{ bg: 'blue.400' }}
-          _focus={{ boxShadow: 'outline' }}
-          as={Button}
-        ><AiOutlineFilter /></MenuButton>
-        <MenuList>
-          <MenuOptionGroup defaultValue='' title='Filter' type='radio' onChange={value => {
-            setFilter(value || undefined)
-          }}>
-            <MenuItemOption value="">All</MenuItemOption>
-            {options.map((option, i) => (
-              option == 'Paid' || option == 'Unpaid' ?
-                <MenuItemOption key={i} value={(option == 'Paid' ? 'true' : 'false')}>
-                  {option}
-                </MenuItemOption>
-                : (
-                  <MenuItemOption key={i} value={option}>
-                    {option}
-                  </MenuItemOption>)
-            ))}
-          </MenuOptionGroup>
-        </MenuList>
-      </Menu>
-    )
-  }
+  //   // Render a multi-select box
+  //   return (
+  //     <Menu>
+  //       <MenuButton
+  //         transition='all 0.2s'
+  //         borderRadius='md'
+  //         borderWidth='1px'
+  //         _hover={{ bg: 'gray.400' }}
+  //         _expanded={{ bg: 'blue.400' }}
+  //         _focus={{ boxShadow: 'outline' }}
+  //         as={Button}
+  //       ><AiOutlineFilter /></MenuButton>
+  //       <MenuList>
+  //         <MenuOptionGroup defaultValue='' title='Filter' type='radio' onChange={value => {
+  //           setFilter(value || undefined)
+  //         }}>
+  //           <MenuItemOption value="">All</MenuItemOption>
+  //           {options.map((option, i) => (
+  //             option == 'Paid' || option == 'Unpaid' ?
+  //               <MenuItemOption key={i} value={(option == 'Paid' ? 'true' : 'false')}>
+  //                 {option}
+  //               </MenuItemOption>
+  //               : (
+  //                 <MenuItemOption key={i} value={option}>
+  //                   {option}
+  //                 </MenuItemOption>)
+  //           ))}
+  //         </MenuOptionGroup>
+  //       </MenuList>
+  //     </Menu>
+  //   )
+  // }
 
-  const defaultColumn = React.useMemo(
-    () => ({
-      Filter: DefaultColumnFilter
-    }),
-    []
-  );
+  // const defaultColumn = React.useMemo(
+  //   () => ({
+  //     Filter: DefaultColumnFilter
+  //   }),
+  //   []
+  // );
 
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: 'Name',
-        accessor: 'user_name',
-        disableFilters: true,
-      },
-      {
-        Header: 'Remark',
-        accessor: 'remark',
-        disableFilters: true,
-      },
-      {
-        Header: 'Payment Method',
-        accessor: 'payment_method',
-      },
-      {
-        Header: '',
-        accessor: 'edit',
-        disableSortBy: true,
-        disableFilters: true,
-      },
-      {
-        Header: 'Receipt',
-        accessor: 'payment_receipt',
-        disableFilters: true,
-        sortType: 'basic'
-      },
-      {
-        Header: 'Pay',
-        accessor: 'pay',
-        // disableFilters: true,
-        sortType: 'basic'
-      },
-    ],
-    [],
-  )
-
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, } =
-    useTable({ columns, data: joms, defaultColumn }, useFilters, useSortBy)
+  // const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, } =
+  //   useTable({ columns, data: joms, defaultColumn }, useFilters, useSortBy)
 
   const copyLink = () => {
     navigator.clipboard.writeText(window.location.href)
@@ -297,6 +260,129 @@ const OrderDetails = () => {
       true
     );
   }
+
+  const columns = [
+    {
+      title: 'Name',
+      dataIndex: 'user_name',
+      key: 'user_name',
+      sorter: (a, b) => a.user_name.localeCompare(b.user_name),
+      render: (text, record) => {
+        return <Link href={`/profile?id=${record.user_id}`} isExternal color="blue.500">
+          {record.user_name}
+        </Link>
+      }
+    },
+    {
+      title: 'Remark',
+      dataIndex: 'remark',
+      key: 'remark',
+      sorter: (a, b) => a.remark.localeCompare(b.remark)
+    },
+    {
+      title: 'Payment Method',
+      dataIndex: 'payment_method',
+      key: 'payment_method',
+      filters: [
+        { text: 'Cash', value: 'Cash' },
+        { text: 'Online Transfer', value: 'Online Transfer' },
+      ],
+      onFilter: (value, record) => record.payment_method.includes(value),
+      sorter: (a, b) => a.payment_method.localeCompare(b.payment_method)
+    },
+    {
+      title: '',
+      dataIndex: 'edit',
+      key: 'edit',
+      render: (text, record) => {
+        if (user && record.user_id === user.id) {
+          return <EditJomButton
+            order_date={new Date(order.order_date)}
+            jom={record}
+          />
+        }
+        else return '';
+      }
+    },
+    {
+      title: 'Receipt',
+      dataIndex: 'payment_receipt',
+      key: 'payment_receipt',
+      sorter: (a, b) => a.payment_receipt.length - b.payment_receipt.length,
+      render: (text, record) => {
+
+        if (user &&
+          record.user_id === user.id &&
+          record.payment_method === "Online Transfer") {
+          if (record.payment_receipt.length === 0) {
+            return <UploadFile
+              multiple
+              id={record.id}
+              accept=".jpg,.png,.jpeg"
+              limitFiles={1}
+              maxFileSizeInBytes={MAX_FILE_SIZE}
+              label="Supports PNG, JPG, JPEG up to 5Mb"
+              dbFunc={uploadPaymentReceipt}
+            />
+          }
+          else return <Receipt jom={record} />
+
+        }
+        else if (record.payment_method === "Online Transfer" ||
+          record.payment_receipt.length > 0) {
+          return <Receipt jom={record} />
+        }
+        else return '-'
+      },
+    },
+    {
+      title: 'Pay',
+      dataIndex: 'pay',
+      key: 'pay',
+      filters: [
+        { text: 'Paid', value: true },
+        { text: 'Unpaid', value: false },
+      ],
+      onFilter: (value, record) => record.pay == value,
+      sorter: (a, b) => a.pay - b.pay,
+      render: (text, record) => {
+        return <Button
+          onClick={() => {
+            const callback = onClickUpdatePayment(
+              record.id,
+              record,
+              record.order_id,
+              user.id
+            );
+            callback.then((result) => {
+              if (result == false) {
+                showToast(
+                  toast,
+                  "Not owner.",
+                  "Only owner of the order can click the pay button",
+                  "error",
+                  5000,
+                  true
+                );
+              }
+            });
+          }}
+          isDisabled={record.pay}
+        >
+          {record.pay ? "Paid" : "Pay"}
+        </Button>
+      }
+
+    },
+  ];
+
+  // const handleChange = (filters, sorter) => {
+  //   console.log('Various parameters', filters, sorter);
+  //   this.setState({
+  //     filteredInfo: filters,
+  //     sortedInfo: sorter,
+  //   });
+  // };
 
   return (
     <>
@@ -317,18 +403,18 @@ const OrderDetails = () => {
               </Link>
               {/* <Spacer /> */}
               <Box position='relative'>
-                  <IconButton
-                    position='absolute'
-                    top='-30px'
-                    right='0px'
-                    variant='solid'
-                    colorScheme='blue'
-                    aria-label='Share Jom'
-                    isRound='true'
-                    size='lg'
-                    icon={<BiShare />}
-                    onClick={copyLink}
-                  />
+                <IconButton
+                  position='absolute'
+                  top='-30px'
+                  right='0px'
+                  variant='solid'
+                  colorScheme='blue'
+                  aria-label='Share Jom'
+                  isRound='true'
+                  size='lg'
+                  icon={<BiShare />}
+                  onClick={copyLink}
+                />
               </Box>
               {/* </Flex> */}
             </ListItem>
@@ -466,15 +552,16 @@ const OrderDetails = () => {
           </Box>
 
           <Divider />
-          <Box overflowX="auto">
-            <Table variant="simple" style={{ marginTop: "20px" }} {...getTableProps()}>
+          <Box overflowX="auto" width={'80%'}>
+            <Table columns={columns} dataSource={joms} pagination={false}/>
+            {/* <Table variant="simple" style={{ marginTop: "20px" }} {...getTableProps()}>
               <Thead>
-                {/* <Th>Name</Th>
+                <Th>Name</Th>
                   <Th>Remark</Th>
                   <Th>Payment Method</Th>
                   <Th></Th>
                   <Th>Receipt</Th>
-                  <Th>Pay</Th> */}
+                  <Th>Pay</Th>
                 {headerGroups.map((headerGroup) => (
                   <Tr {...headerGroup.getHeaderGroupProps()}>
                     {headerGroup.headers.map((column) => (
@@ -646,7 +733,7 @@ const OrderDetails = () => {
                           ) : (
                             ""
                           )} */}
-                {/* {user &&
+            {/* {user &&
                           jom.user_id === user.id &&
                           jom.payment_method === "Online Transfer" ? (
                             jom.payment_receipt.length === 0 ? (
@@ -665,7 +752,7 @@ const OrderDetails = () => {
                           ) : (
                             "-"
                           )} */}
-                {/* </Th>
+            {/* </Th>
                         <Th>
                           <Button
                             onClick={() => {
@@ -696,8 +783,8 @@ const OrderDetails = () => {
                       </Tr>
                     );
                   })} */}
-              </Tbody>
-            </Table>
+            {/* </Tbody>
+            </Table> */}
           </Box>
         </>
       )}
